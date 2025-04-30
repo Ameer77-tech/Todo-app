@@ -13,7 +13,14 @@ const Main = () => {
       setTimeout(() => {
         setstats("")
       }, 1000)
-    } else {
+    }
+      else if(title.length>10){
+        setstats(<h1 className='text-red-700'>Title length must be below 10 characters</h1>)
+        setTimeout(() => {
+          setstats("")
+        }, 1000)
+      }
+    else {
       const task = { title, desc }
       setrenderTask([...renderTask, task])
       settitle("")
