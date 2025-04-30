@@ -18,7 +18,7 @@ const Main = () => {
         setstats(<h1 className='text-red-700'>Title length must be below 10 characters</h1>)
         setTimeout(() => {
           setstats("")
-        }, 1000)
+        }, 1500)
       }
     else {
       const task = { title, desc }
