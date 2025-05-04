@@ -1,11 +1,21 @@
 "use client"
-import React, { useState } from 'react'
+import { AnimatePresence, motion } from "motion/react"
+
+import React, { useEffect, useState } from 'react'
 
 const Main = () => {
   const [title, settitle] = useState("")
   const [desc, setdesc] = useState("")
   const [stats, setstats] = useState("")
   const [renderTask, setrenderTask] = useState([])
+
+  useEffect(() => {
+    
+    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || []
+    setrenderTask(storedTasks)
+   
+  }, [])
+  
 
   function submitHandler() {
     if (title === "" && desc === "") {
@@ -22,7 +32,9 @@ const Main = () => {
       }
     else {
       const task = { title, desc }
-      setrenderTask([...renderTask, task])
+      const updatedTasks = [...renderTask, task]
+      setrenderTask(updatedTasks)
+      localStorage.setItem('tasks',JSON.stringify(updatedTasks))
       settitle("")
       setdesc("")
     }
@@ -34,25 +46,36 @@ const Main = () => {
     }
 
     return renderTask.map((t, index) => (
-      <div
+     <AnimatePresence key={index}>
+      <motion.div 
+      initial={{opacity:0,y:-50}}
+      animate={{opacity:1,y:0}}
+      transition={{duration:0.4,ease:'easeOut'}}
         key={index}
-        className="bg-white rounded flex flex-col justify-between p-3 mb-3"
+        className="bg-white rounded flex flex-col justify-between p-3 mb-3 overflow-hidden"
       >
         <div className="font-bold uppercase flex justify-between items-center">
-          <h1>{t.title}</h1>
-          <input type='checkbox' className='accent-green-600' />
+          <motion.h1 initial={{opacity:0,y:-50}} animate={{y:0,opacity:1}} transition={{duration:0.6,ease:'easeOut'}}>{t.title}</motion.h1>
+          <motion.input 
+          initial={{opacity:0,y:-50}} animate={{y:0,opacity:1}} transition={{duration:0.6,ease:'easeOut'}}
+          type='checkbox' className='accent-green-600' />
         </div>
         <div className="flex justify-between items-end mt-2 gap-2">
-          <h3 className="w-4/5 break-words">{t.desc}</h3>
-          <button className="bg-red-600 cursor-pointer border-2 text-white px-2 py-1 text-sm font-medium rounded hover:bg-red-500 transition-all"
+          <motion.h3 
+          initial={{opacity:0,y:-50}} animate={{y:0,opacity:1}} transition={{duration:0.75,ease:'easeOut'}}
+          className="w-4/5 break-words">{t.desc}</motion.h3>
+          <motion.button 
+          initial={{opacity:0,x:30}} animate={{x:0,opacity:1}} transition={{duration:0.4,ease:'easeOut'}}
+          className="bg-red-600 cursor-pointer border-2 text-white px-2 py-1 text-sm font-medium rounded hover:bg-red-500 transition-all"
             onClick={() => {
               deleteHandler(index);
             }}
           >
             Delete
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
+      </AnimatePresence>
     ))
   }
 
@@ -60,6 +83,7 @@ const Main = () => {
     const updatedTask = [...renderTask]
     updatedTask.splice(index, 1)
     setrenderTask(updatedTask)
+    localStorage.setItem('tasks',JSON.stringify(updatedTask))
   }
 
   return (
